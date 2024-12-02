@@ -1,0 +1,36 @@
+spring:
+  application:
+    name: order
+
+#  datasource:
+#    url: jdbc:mysql://mysql-db:3306/${MYSQL_DATABASE}
+#    username: ${MYSQL_USER}
+#    password: ${MYSQL_PASSWORD}
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#  data:
+#    redis:
+#      host: redis-stack
+#      port: 6379
+#      password: ${REDIS_PASSWORD}
+#
+#  jpa:
+#    hibernate:
+#      ddl-auto: update
+#    show-sql: true
+
+server:
+  port: 19092
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:19090/eureka/
+
+
+management:
+  zipkin:
+    tracing:
+      endpoint: "http://localhost:9411/api/v2/spans"
+  tracing:
+    sampling:
+      probability: 1.0
