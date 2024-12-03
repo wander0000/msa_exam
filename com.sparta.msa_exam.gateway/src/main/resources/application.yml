@@ -9,40 +9,32 @@ spring:
         - id: order
           uri: lb://order
           predicates:
-            - Path=/order/**
+            - Path=/orders/**
         - id: product
           uri: lb://product
           predicates:
-            - Path=/product/**
+            - Path=/products/**
         - id: auth
           uri: lb://auth
           predicates:
             - Path=/auth/**
+      loadbalancer:
+        ribbon:
+          products:
+            servers:
+              - localhost:19093
+              - localhost:19094
+            weights:
+              - 70
+              - 30
       discovery:
         locator:
           enabled: true
-
-#  datasource:
-#    url: jdbc:mysql://mysql-db:3306/${MYSQL_DATABASE}
-#    username: ${MYSQL_USER}
-#    password: ${MYSQL_PASSWORD}
-#    driver-class-name: com.mysql.cj.jdbc.Driver
-#  data:
-#    redis:
-#      host: redis-stack
-#      port: 6379
-#      password: ${REDIS_PASSWORD}
-#  jpa:
-#    hibernate:
-#      ddl-auto: update
-#    show-sql: true
+  profiles:
+    active: dev
 
 server:
   port: 19091
-
-service:
-  jwt:
-    secret-key: ${JWT_SECRET_KEY}
 
 eureka:
   client:
