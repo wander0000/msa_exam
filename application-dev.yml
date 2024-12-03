@@ -1,4 +1,8 @@
 spring:
+  config:
+    activate:
+      on-profile: dev
+
   datasource:
     url: jdbc:mysql://localhost:3306/${MYSQL_DATABASE}
     username: ${MYSQL_USER}
@@ -7,11 +11,17 @@ spring:
 
   data:
     redis:
-      host: redis-stack
+      host: localhost
+      #      host: redis-stack
       port: 6379
+      username: default
       password: ${REDIS_PASSWORD}
-
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
+
+service:
+  jwt:
+    access-expiration: ${JWT_ACCESS_EXPIRATION}
+    secret-key: ${JWT_SECRET_KEY}

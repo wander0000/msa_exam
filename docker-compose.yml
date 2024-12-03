@@ -1,0 +1,96 @@
+services:
+  eureka-server:
+    build:
+      context: ./com.sparta.msa_exam.server
+    container_name: eureka-server
+    ports:
+      - "19090:19090"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+    networks:
+      - msa-network
+
+  gateway:
+    build:
+      context: ./com.sparta.msa_exam.gateway
+    container_name: gateway
+    ports:
+      - "19091:19091"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - EUREKA_SERVER_URL=http://eureka-server:19090/eureka
+    depends_on:
+      - eureka-server
+    networks:
+      - msa-network
+
+  order:
+    build:
+      context: ./com.sparta.msa_exam.order
+    container_name: order
+    ports:
+      - "19092:19092"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - EUREKA_SERVER_URL=http://eureka-server:19090/eureka
+    depends_on:
+      - eureka-server
+    networks:
+      - msa-network
+
+  product:
+    build:
+      context: ./com.sparta.msa_exam.product
+    container_name: product
+    ports:
+      - "19093:19093"
+      - "19094:19094"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - EUREKA_SERVER_URL=http://eureka-server:19090/eureka
+    depends_on:
+      - eureka-server
+    networks:
+      - msa-network
+
+  auth:
+    build:
+      context: ./com.sparta.msa_exam.auth
+    container_name: auth
+    ports:
+      - "19095:19095"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - JWT_ACCESS_EXPIRATION=${JWT_ACCESS_EXPIRATION}
+      - EUREKA_SERVER_URL=http://eureka-server:19090/eureka
+    depends_on:
+      - eureka-server
+    networks:
+      - msa-network
+
+  mysql-db:
+    image: mysql:8.0
+    container_name: mysql-container
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "3306:3306"
+
+  redis-stack:
+    image: redis/redis-stack
+    container_name: redis-stack-compose
+    restart: always
+    environment:
+      REDIS_ARGS: "--requirepass ${REDIS_PASSWORD}"
+    ports:
+      - 6379:6379
+      - 8001:8001
+
+networks:
+  msa-network:
+    driver: bridge
